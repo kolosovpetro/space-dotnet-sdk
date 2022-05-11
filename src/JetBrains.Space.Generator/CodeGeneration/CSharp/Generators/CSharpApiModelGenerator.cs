@@ -68,6 +68,15 @@ public class CSharpApiModelGenerator
         WriteToDocument(clientDocumentWriter, 
             "MenuIds.generated.cs",
             menuIdsGenerator.GenerateMenuIds(_codeGenerationContext.GetMenuIds()));
+            
+        // Dtos
+        var classGenerator = new CSharpApiModelClassGenerator(_codeGenerationContext);
+        foreach (var apiClass in _codeGenerationContext.GetClasses())
+        {
+            WriteToDocument(clientDocumentWriter, 
+                "Classes/" + apiClass.ToCSharpClassName() + ".generated.cs",
+                classGenerator.GenerateClassDefinition(apiClass));
+        }
         
         // Version info
         var deploymentInfoGenerator = new CSharpDeploymentInfoGenerator();

@@ -13,13 +13,15 @@ public class CodeGenerationContext
     private readonly SortedDictionary<string, ApiDto> _idToDtoMap;
     private readonly SortedDictionary<string, bool> _idToIsRequestBodyDtoMap;
     private readonly SortedDictionary<string, ApiUrlParameter> _idToUrlParameterMap;
+    private readonly SortedDictionary<string, ApiClass> _nameToClassMap;
 
     private CodeGenerationContext(
         ApiModel apiModel,
         DeploymentInfo deploymentInfo,
         SortedDictionary<string, ApiEnum> idToEnumMap,
         SortedDictionary<string, ApiDto> idToDtoMap,
-        SortedDictionary<string, ApiUrlParameter> idToUrlParameterMap)
+        SortedDictionary<string, ApiUrlParameter> idToUrlParameterMap,
+        SortedDictionary<string, ApiClass> nameToClassMap)
     {
         ApiModel = apiModel;
         DeploymentInfo = deploymentInfo;
@@ -27,6 +29,7 @@ public class CodeGenerationContext
         _idToDtoMap = idToDtoMap;
         _idToIsRequestBodyDtoMap = new SortedDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
         _idToUrlParameterMap = idToUrlParameterMap;
+        _nameToClassMap = nameToClassMap;
     }
 
     public static CodeGenerationContext CreateFrom(ApiModel apiModel, DeploymentInfo deploymentInfo)
@@ -49,6 +52,11 @@ public class CodeGenerationContext
             idToUrlParameterMap: new SortedDictionary<string, ApiUrlParameter>(
                 apiModel.UrlParameters.ToImmutableSortedDictionary(
                     it => it.Id,
+                    it => it),
+                StringComparer.OrdinalIgnoreCase), 
+            nameToClassMap: new SortedDictionary<string, ApiClass>(
+                apiModel.Classes.ToImmutableSortedDictionary(
+                    it => it.Name,
                     it => it),
                 StringComparer.OrdinalIgnoreCase));
 #pragma warning restore 8619
@@ -82,4 +90,7 @@ public class CodeGenerationContext
     public bool TryGetUrlParameter(string id, out ApiUrlParameter? apiUrlParameter) => _idToUrlParameterMap.TryGetValue(id, out apiUrlParameter);
         
     public IEnumerable<ApiMenuId> GetMenuIds() => ApiModel.MenuIds;
+        
+    public IEnumerable<ApiClass> GetClasses() => _nameToClassMap.Values;
+    public bool TryGetClass(string name, out ApiClass? apiClass) => _nameToClassMap.TryGetValue(name, out apiClass);
 }

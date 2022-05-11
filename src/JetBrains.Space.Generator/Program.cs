@@ -191,6 +191,7 @@ public static class Program
         Console.WriteLine($"Code generation completed in: {stopwatch.Elapsed}");
         Console.WriteLine($"  Number of DTO: {codeGenerationContext.GetDtos().Count()}");
         Console.WriteLine($"  Number of Enums: {codeGenerationContext.GetEnums().Count()}");
+        Console.WriteLine($"  Number of Classes: {codeGenerationContext.GetClasses().Count()}");
         Console.WriteLine($"  Number of Resources (top level): {codeGenerationContext.GetResources().Count()}");
             
         // Write version marker
