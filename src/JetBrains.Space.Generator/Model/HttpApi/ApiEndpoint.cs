@@ -20,11 +20,11 @@ public class ApiEndpoint
         
     [JsonPropertyName("requestBody")]
     [JsonConverter(typeof(ApiFieldTypeConverter))]
-    public ApiFieldType.Object? RequestBody { get; set; }
+    public ApiType.Object? RequestBody { get; set; }
         
     [JsonPropertyName("responseBody")]
     [JsonConverter(typeof(ApiFieldTypeConverter))]
-    public ApiFieldType? ResponseBody { get; set; }
+    public ApiType? ResponseBody { get; set; }
         
     [JsonPropertyName("path")]
     public ApiResourcePath Path { get; set; } = default!;

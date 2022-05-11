@@ -12,13 +12,13 @@ namespace JetBrains.Space.Client.Tests.Json.Serialization;
 public class ApiFieldTypeConverterTests
 {
     [Theory]
-    [InlineData(typeof(ApiFieldType.Array), true)]
-    [InlineData(typeof(ApiFieldType.Dto), true)]
-    [InlineData(typeof(ApiFieldType.Enum), true)]
-    [InlineData(typeof(ApiFieldType.UrlParam), true)]
-    [InlineData(typeof(ApiFieldType.Object), true)]
-    [InlineData(typeof(ApiFieldType.Primitive), true)]
-    [InlineData(typeof(ApiFieldType.Ref), true)]
+    [InlineData(typeof(ApiType.Array), true)]
+    [InlineData(typeof(ApiType.Dto), true)]
+    [InlineData(typeof(ApiType.Enum), true)]
+    [InlineData(typeof(ApiType.UrlParam), true)]
+    [InlineData(typeof(ApiType.Object), true)]
+    [InlineData(typeof(ApiType.Primitive), true)]
+    [InlineData(typeof(ApiType.Ref), true)]
     [InlineData(typeof(Enumeration), false)]
     [InlineData(typeof(object), false)]
     public void CanConvertTests(Type requestedType, bool expectedResult)
@@ -41,18 +41,18 @@ public class ApiFieldTypeConverterTests
         var target = new ApiFieldTypeConverter();
             
         // Act
-        ApiFieldType? result = null;
+        ApiType? result = null;
         var utf8JsonBytes = Encoding.UTF8.GetBytes(json);
         var reader = new Utf8JsonReader(utf8JsonBytes, true, new JsonReaderState());
         while (reader.Read())
         {
-            result = target.Read(ref reader, typeof(ApiFieldType), new JsonSerializerOptions());
+            result = target.Read(ref reader, typeof(ApiType), new JsonSerializerOptions());
         }
                 
         // Assert
-        Assert.IsType<ApiFieldType.Primitive>(result);
+        Assert.IsType<ApiType.Primitive>(result);
             
-        var primitiveResult = result as ApiFieldType.Primitive;
+        var primitiveResult = result as ApiType.Primitive;
         Assert.Equal("String", primitiveResult?.Type);
         Assert.True(primitiveResult?.Nullable);
     }
@@ -61,7 +61,7 @@ public class ApiFieldTypeConverterTests
     public void WriteTests()
     {
         // Arrange
-        var input = new ApiFieldType.Primitive
+        var input = new ApiType.Primitive
         {
             Type = "String",
             Nullable = true

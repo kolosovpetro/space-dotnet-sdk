@@ -6,9 +6,9 @@ namespace JetBrains.Space.Generator.CodeGeneration.Extensions;
 
 public static class ApiFieldTypeExtensions
 {
-    public static ApiFieldType GetArrayElementTypeOrType(this ApiFieldType subject)
+    public static ApiType GetArrayElementTypeOrType(this ApiType subject)
     {
-        if (subject is ApiFieldType.Array arrayFieldType)
+        if (subject is ApiType.Array arrayFieldType)
         {
             return arrayFieldType.ElementType;
         }
@@ -16,9 +16,9 @@ public static class ApiFieldTypeExtensions
         return subject;
     }
         
-    public static ApiFieldType GetMapValueTypeOrType(this ApiFieldType subject)
+    public static ApiType GetMapValueTypeOrType(this ApiType subject)
     {
-        if (subject is ApiFieldType.Map mapFieldType)
+        if (subject is ApiType.Map mapFieldType)
         {
             return mapFieldType.ValueType;
         }
@@ -26,9 +26,9 @@ public static class ApiFieldTypeExtensions
         return subject;
     }
         
-    public static ApiFieldType GetBatchElementTypeOrType(this ApiFieldType subject)
+    public static ApiType GetBatchElementTypeOrType(this ApiType subject)
     {
-        if (subject is ApiFieldType.Object objectFieldType)
+        if (subject is ApiType.Object objectFieldType)
         {
             return GetBatchDataType(objectFieldType)?.ElementType ?? objectFieldType;
         }
@@ -36,12 +36,12 @@ public static class ApiFieldTypeExtensions
         return subject.GetArrayElementTypeOrType();
     }
         
-    public static ApiFieldType.Array? GetBatchDataType(this ApiFieldType.Object subject)
+    public static ApiType.Array? GetBatchDataType(this ApiType.Object subject)
     {
-        if (subject.Kind != ApiFieldType.Object.ObjectKind.BATCH) return null;
+        if (subject.Kind != ApiType.Object.ObjectKind.BATCH) return null;
             
         var dataFieldType = subject.Fields.First(it => string.Equals(it.Name, "data", StringComparison.OrdinalIgnoreCase));
-        var dataFieldArrayType = (ApiFieldType.Array)dataFieldType.Type;
+        var dataFieldArrayType = (ApiType.Array)dataFieldType.Type;
         return dataFieldArrayType;
     }
 }

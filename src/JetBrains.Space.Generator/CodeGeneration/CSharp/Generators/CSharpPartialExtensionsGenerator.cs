@@ -67,8 +67,8 @@ public class CSharpPartialExtensionsGenerator
 
         var currentFieldInnerType = GenerateCSharpTypeFrom(apiField.Type);
             
-        var isPrimitiveOrObject = apiField.Type is ApiFieldType.Primitive or ApiFieldType.Object;
-        var isArrayOfPrimitive = apiField.Type is ApiFieldType.Array { ElementType: ApiFieldType.Primitive };
+        var isPrimitiveOrObject = apiField.Type is ApiType.Primitive or ApiType.Object;
+        var isArrayOfPrimitive = apiField.Type is ApiType.Array { ElementType: ApiType.Primitive };
         if (!isPrimitiveOrObject && !isArrayOfPrimitive && !string.IsNullOrEmpty(currentFieldInnerType))
         {
             // Recursive field?
@@ -112,31 +112,31 @@ public class CSharpPartialExtensionsGenerator
         return builder.ToString();
     }
 
-    private string GenerateCSharpTypeFrom(ApiFieldType apiFieldType)
+    private string GenerateCSharpTypeFrom(ApiType apiType)
     {
-        switch (apiFieldType)
+        switch (apiType)
         {
-            case ApiFieldType.Array apiFieldTypeArray:
+            case ApiType.Array apiFieldTypeArray:
                 return GenerateCSharpTypeFrom(apiFieldTypeArray.ElementType);
                 
-            case ApiFieldType.Dto apiFieldTypeDto:
+            case ApiType.Dto apiFieldTypeDto:
                 if (apiFieldTypeDto.DtoRef?.Id != null && _context.TryGetDto(apiFieldTypeDto.DtoRef.Id, out var apiDto))
                 {
                     return apiDto!.ToCSharpClassName();
                 }
                 break;
                 
-            case ApiFieldType.Enum apiFieldTypeEnum:
+            case ApiType.Enum apiFieldTypeEnum:
                 if (apiFieldTypeEnum.EnumRef?.Id != null && _context.TryGetEnum(apiFieldTypeEnum.EnumRef.Id, out var apiEnum))
                 {
                     return apiEnum!.ToCSharpClassName();
                 }
                 break;
                 
-            case ApiFieldType.Map apiFieldTypeMap:
+            case ApiType.Map apiFieldTypeMap:
                 return GenerateCSharpTypeFrom(apiFieldTypeMap.ValueType);
                 
-            case ApiFieldType.UrlParam apiFieldTypeUrlParam:
+            case ApiType.UrlParam apiFieldTypeUrlParam:
                 if (apiFieldTypeUrlParam.UrlParamRef?.Id != null && _context.TryGetUrlParameter(apiFieldTypeUrlParam.UrlParamRef.Id, out var apiUrlParam))
                 {
                     return apiUrlParam!.ToCSharpClassName();
@@ -146,8 +146,8 @@ public class CSharpPartialExtensionsGenerator
                     throw new ResourceException("Could not generate type name for URL parameter with ref id: " + apiFieldTypeUrlParam.UrlParamRef?.Id);
                 }
                 
-            case ApiFieldType.Object apiFieldTypeObject:
-                if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.PAIR)
+            case ApiType.Object apiFieldTypeObject:
+                if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.PAIR)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -158,7 +158,7 @@ public class CSharpPartialExtensionsGenerator
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.TRIPLE)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.TRIPLE)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -171,7 +171,7 @@ public class CSharpPartialExtensionsGenerator
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.BATCH)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.BATCH)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -180,7 +180,7 @@ public class CSharpPartialExtensionsGenerator
                     sb.Append(">");
                     return sb.ToString();
                 }  
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.MOD)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.MOD)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -189,7 +189,7 @@ public class CSharpPartialExtensionsGenerator
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.REQUEST_BODY)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.REQUEST_BODY)
                 {
                     // Request body/anonymous type?
                     throw new ResourceException($"The method {nameof(GenerateCSharpTypeFrom)}() should not be called with object kind: " + apiFieldTypeObject.Kind 
@@ -201,10 +201,10 @@ public class CSharpPartialExtensionsGenerator
                     throw new ResourceException("Could not generate type name for object kind: " + apiFieldTypeObject.Kind);
                 }
                 
-            case ApiFieldType.Primitive apiFieldTypePrimitive:
+            case ApiType.Primitive apiFieldTypePrimitive:
                 return apiFieldTypePrimitive.ToCSharpPrimitiveType().Value;
         
-            case ApiFieldType.Ref apiFieldTypeReference:
+            case ApiType.Ref apiFieldTypeReference:
                 if (apiFieldTypeReference.DtoRef?.Id != null && _context.TryGetDto(apiFieldTypeReference.DtoRef.Id, out var apiReferenceDto))
                 {
                     return apiReferenceDto!.ToCSharpClassName();
@@ -212,6 +212,6 @@ public class CSharpPartialExtensionsGenerator
                 break;
         }
             
-        throw new ResourceException("Could not generate type name for field type: " + apiFieldType.ClassName);
+        throw new ResourceException("Could not generate type name for field type: " + apiType.ClassName);
     }
 }

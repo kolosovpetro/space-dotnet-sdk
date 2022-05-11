@@ -13,7 +13,7 @@ public static class ApiEndpointExtensions
 
     public static string? ToCSharpRequestBodyClassName(this ApiEndpoint subject, string endpointPath)
     {
-        if (subject.RequestBody is not { Kind: ApiFieldType.Object.ObjectKind.REQUEST_BODY }) return null;
+        if (subject.RequestBody is not { Kind: ApiType.Object.ObjectKind.REQUEST_BODY }) return null;
             
         return CSharpIdentifier.ForClassOrNamespace(endpointPath)
                + subject.Method.ToHttpMethod().ToLowerInvariant().ToUppercaseFirst()

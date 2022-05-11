@@ -230,8 +230,8 @@ public class CSharpApiModelDtoGenerator
             // REVIEW: This is a mutation, might be good to consider making this immutable.
             apiField.DefaultValue = apiField.Type switch
             {
-                ApiFieldType.Array => new ApiDefaultValue.Collection(),
-                ApiFieldType.Map => new ApiDefaultValue.Map(),
+                ApiType.Array => new ApiDefaultValue.Collection(),
+                ApiType.Map => new ApiDefaultValue.Map(),
                 _ => apiField.DefaultValue
             };
         }
@@ -279,7 +279,7 @@ public class CSharpApiModelDtoGenerator
         }
         builder.AppendLine($"{indent}[JsonPropertyName(\"{apiField.Name}\")]");
 
-        if (apiField.Type is ApiFieldType.Primitive apiFieldTypePrimitive)
+        if (apiField.Type is ApiType.Primitive apiFieldTypePrimitive)
         {
             var csharpType = apiFieldTypePrimitive.ToCSharpPrimitiveType();
             if (csharpType.JsonConverter != null)

@@ -7,7 +7,7 @@ namespace JetBrains.Space.Generator.CodeGeneration.CSharp.Extensions;
 
 public static class ApiFieldTypeExtensions
 {
-    public static CSharpType ToCSharpPrimitiveType(this ApiFieldType.Primitive subject) =>
+    public static CSharpType ToCSharpPrimitiveType(this ApiType.Primitive subject) =>
         subject.Type switch
         {
             "Byte" => CSharpType.Byte,
@@ -23,20 +23,20 @@ public static class ApiFieldTypeExtensions
             _ => CSharpType.Object
         };
 
-    public static bool IsCSharpReferenceType(this ApiFieldType apiFieldType) =>
-        apiFieldType switch
+    public static bool IsCSharpReferenceType(this ApiType apiType) =>
+        apiType switch
         {
-            ApiFieldType.Enum => false,
-            ApiFieldType.Primitive primitiveType when primitiveType.ToCSharpPrimitiveType() != CSharpType.String =>
+            ApiType.Enum => false,
+            ApiType.Primitive primitiveType when primitiveType.ToCSharpPrimitiveType() != CSharpType.String =>
                 false,
             _ => true
         };
 
-    public static string ToCSharpType(this ApiFieldType apiFieldType, CodeGenerationContext context)
+    public static string ToCSharpType(this ApiType apiType, CodeGenerationContext context)
     {
-        switch (apiFieldType)
+        switch (apiType)
         {
-            case ApiFieldType.Array apiFieldTypeArray:
+            case ApiType.Array apiFieldTypeArray:
             {
                 var sb = new StringBuilder();
                 sb.Append("List<");
@@ -45,7 +45,7 @@ public static class ApiFieldTypeExtensions
                 return sb.ToString();
             }
 
-            case ApiFieldType.Dto apiFieldTypeDto:
+            case ApiType.Dto apiFieldTypeDto:
                 if (apiFieldTypeDto.DtoRef?.Id != null && context.TryGetDto(apiFieldTypeDto.DtoRef.Id, out var apiDto))
                 {
                     return apiDto!.ToCSharpClassName();
@@ -55,7 +55,7 @@ public static class ApiFieldTypeExtensions
                     return "object";
                 }
                 
-            case ApiFieldType.Enum apiFieldTypeEnum:
+            case ApiType.Enum apiFieldTypeEnum:
                 if (apiFieldTypeEnum.EnumRef?.Id != null && context.TryGetEnum(apiFieldTypeEnum.EnumRef.Id, out var apiEnum))
                 {
                     return apiEnum!.ToCSharpClassName();
@@ -65,7 +65,7 @@ public static class ApiFieldTypeExtensions
                     return "string";
                 }
                 
-            case ApiFieldType.UrlParam apiFieldTypeUrlParam:
+            case ApiType.UrlParam apiFieldTypeUrlParam:
                 if (apiFieldTypeUrlParam.UrlParamRef?.Id != null && context.TryGetUrlParameter(apiFieldTypeUrlParam.UrlParamRef.Id, out var apiUrlParam))
                 {
                     return apiUrlParam!.ToCSharpClassName();
@@ -75,7 +75,7 @@ public static class ApiFieldTypeExtensions
                     throw new ResourceException("Could not generate type name for URL parameter with ref id: " + apiFieldTypeUrlParam.UrlParamRef?.Id);
                 }
                 
-            case ApiFieldType.Map apiFieldTypeMap:
+            case ApiType.Map apiFieldTypeMap:
             {
                 var sb = new StringBuilder();
                 sb.Append("Dictionary<string, ");
@@ -84,8 +84,8 @@ public static class ApiFieldTypeExtensions
                 return sb.ToString();
             }
 
-            case ApiFieldType.Object apiFieldTypeObject:
-                if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.PAIR)
+            case ApiType.Object apiFieldTypeObject:
+                if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.PAIR)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -96,7 +96,7 @@ public static class ApiFieldTypeExtensions
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.TRIPLE)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.TRIPLE)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -109,7 +109,7 @@ public static class ApiFieldTypeExtensions
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.BATCH)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.BATCH)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -118,7 +118,7 @@ public static class ApiFieldTypeExtensions
                     sb.Append(">");
                     return sb.ToString();
                 }  
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.MOD)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.MOD)
                 {
                     // Known anonymous type
                     var sb = new StringBuilder();
@@ -127,7 +127,7 @@ public static class ApiFieldTypeExtensions
                     sb.Append(">");
                     return sb.ToString();
                 }
-                else if (apiFieldTypeObject.Kind == ApiFieldType.Object.ObjectKind.REQUEST_BODY)
+                else if (apiFieldTypeObject.Kind == ApiType.Object.ObjectKind.REQUEST_BODY)
                 {
                     // Request body/anonymous type?
                     throw new ResourceException($"The method {nameof(ToCSharpType)}() should not be called with object kind: " + apiFieldTypeObject.Kind 
@@ -139,10 +139,10 @@ public static class ApiFieldTypeExtensions
                     throw new ResourceException("Could not generate type for object kind: " + apiFieldTypeObject.ClassName);
                 }
                 
-            case ApiFieldType.Primitive apiFieldTypePrimitive:
+            case ApiType.Primitive apiFieldTypePrimitive:
                 return apiFieldTypePrimitive.ToCSharpPrimitiveType().Value;
         
-            case ApiFieldType.Ref apiFieldTypeReference:
+            case ApiType.Ref apiFieldTypeReference:
                 if (apiFieldTypeReference.DtoRef?.Id != null && context.TryGetDto(apiFieldTypeReference.DtoRef.Id, out var apiReferenceDto))
                 {
                     return apiReferenceDto!.ToCSharpClassName();

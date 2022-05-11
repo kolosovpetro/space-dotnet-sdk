@@ -19,17 +19,17 @@ public static class ApiFieldExtensions
 
         return subject.Type switch
         {
-            ApiFieldType.Primitive primitive when primitive.ToCSharpPrimitiveType() == CSharpType.Bool 
+            ApiType.Primitive primitive when primitive.ToCSharpPrimitiveType() == CSharpType.Bool 
                                                   && !propertyName.StartsWith("Is") 
                                                   && !propertyName.StartsWith("Can")
                 => $"Is{propertyName}",
                 
             // Resolve CS0542 - Member names cannot be the same as their enclosing type by adding prefix/suffix
-            ApiFieldType.Array when string.Equals(propertyName, containingType, StringComparison.OrdinalIgnoreCase)
+            ApiType.Array when string.Equals(propertyName, containingType, StringComparison.OrdinalIgnoreCase)
                 => $"{propertyName}Items",
                 
             // Resolve CS0542 - Member names cannot be the same as their enclosing type by adding prefix/suffix
-            ApiFieldType.Dto when string.Equals(propertyName, containingType, StringComparison.OrdinalIgnoreCase)
+            ApiType.Dto when string.Equals(propertyName, containingType, StringComparison.OrdinalIgnoreCase)
                 => $"{propertyName}Item",
                 
             _ => propertyName
@@ -85,10 +85,10 @@ public static class ApiFieldExtensions
             
         if (subject.DefaultValue is ApiDefaultValue.Const.EnumEntry enumEntry)
         {
-            var apiEnumRef = subject.Type as ApiFieldType.Enum;
+            var apiEnumRef = subject.Type as ApiType.Enum;
             if (apiEnumRef == null || !context.TryGetEnum(apiEnumRef.EnumRef!.Id, out var apiEnum) || apiEnum == null)
             {
-                throw new NotSupportedException("For " + nameof(ApiDefaultValue.Const.EnumEntry) + ", the field type should be of type" + nameof(ApiFieldType.Enum) + ".");
+                throw new NotSupportedException("For " + nameof(ApiDefaultValue.Const.EnumEntry) + ", the field type should be of type" + nameof(ApiType.Enum) + ".");
             }
 
             var typeNameForEnum = apiEnum.ToCSharpClassName();
@@ -143,13 +143,13 @@ public static class ApiFieldExtensions
         return subject.Optional &&
                subject.DefaultValue == null &&
                !subject.Type.Nullable && (
-                   (subject.Type is ApiFieldType.Primitive primitiveType && (
+                   (subject.Type is ApiType.Primitive primitiveType && (
                        primitiveType.ToCSharpPrimitiveType() == CSharpType.String ||
                        primitiveType.ToCSharpPrimitiveType() == CSharpType.Bool))
                    
                    ||
                    
-                   subject.Type is ApiFieldType.Enum
+                   subject.Type is ApiType.Enum
                );
     }
 }

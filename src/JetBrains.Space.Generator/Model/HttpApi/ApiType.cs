@@ -8,7 +8,7 @@ using JetBrains.Space.Generator.Model.HttpApi.Converters;
 
 namespace JetBrains.Space.Generator.Model.HttpApi;
 
-public abstract class ApiFieldType
+public abstract class ApiType
 {
     [JsonPropertyName("className")]
     public string? ClassName { get; set; }
@@ -19,27 +19,27 @@ public abstract class ApiFieldType
     [JsonPropertyName("tags")] 
     public List<string> Tags { get; set; } = new();
 
-    public class Primitive : ApiFieldType
+    public class Primitive : ApiType
     {
         [JsonPropertyName("primitive")]
         public string Type { get; set; } = default!;
     }
         
-    public class Array : ApiFieldType
+    public class Array : ApiType
     {
         [JsonPropertyName("elementType")]
         [JsonConverter(typeof(ApiFieldTypeConverter))]
-        public ApiFieldType ElementType { get; set; } = default!;
+        public ApiType ElementType { get; set; } = default!;
     }
         
-    public class Map : ApiFieldType
+    public class Map : ApiType
     {
         [JsonPropertyName("valueType")]
         [JsonConverter(typeof(ApiFieldTypeConverter))]
-        public ApiFieldType ValueType { get; set; } = default!;
+        public ApiType ValueType { get; set; } = default!;
     }
         
-    public class Object : ApiFieldType
+    public class Object : ApiType
     {
         [JsonPropertyName("fields")]
         public List<ApiField> Fields { get; set; } = new();
@@ -59,25 +59,25 @@ public abstract class ApiFieldType
         }
     }
         
-    public class Enum : ApiFieldType
+    public class Enum : ApiType
     {
         [JsonPropertyName("enum")]
         public Reference<ApiEnum>? EnumRef { get; set; }
     }
         
-    public class UrlParam : ApiFieldType
+    public class UrlParam : ApiType
     {
         [JsonPropertyName("urlParam")]
         public Reference<ApiUrlParameter>? UrlParamRef { get; set; }
     }
         
-    public class Dto : ApiFieldType
+    public class Dto : ApiType
     {
         [JsonPropertyName("dto")]
         public ApiDto? DtoRef { get; set; }
     }
         
-    public class Ref : ApiFieldType
+    public class Ref : ApiType
     {
         [JsonPropertyName("dto")]
         public ApiDto? DtoRef { get; set; }

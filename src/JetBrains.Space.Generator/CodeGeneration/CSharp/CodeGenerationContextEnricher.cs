@@ -24,7 +24,7 @@ public static class CodeGenerationContextEnricher
                 
             foreach (var apiEndpoint in apiResource.Endpoints)
             {
-                if (apiEndpoint.RequestBody is { Kind: ApiFieldType.Object.ObjectKind.REQUEST_BODY })
+                if (apiEndpoint.RequestBody is { Kind: ApiType.Object.ObjectKind.REQUEST_BODY })
                 {
                     // Endpoint path
                     var endpointPath = (resourcePath + "/" + apiEndpoint.Path.Segments.ToPath()).TrimEnd('/');

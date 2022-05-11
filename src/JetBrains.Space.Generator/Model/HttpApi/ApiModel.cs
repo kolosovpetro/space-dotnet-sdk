@@ -19,4 +19,7 @@ public class ApiModel
         
     [JsonPropertyName("menuIds")]
     public List<ApiMenuId> MenuIds { get; set; } = new();
+        
+    [JsonPropertyName("classes")]
+    public List<ApiClass> Classes { get; set; } = new();
 }

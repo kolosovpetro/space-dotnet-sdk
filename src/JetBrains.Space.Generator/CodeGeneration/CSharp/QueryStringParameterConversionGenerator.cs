@@ -52,7 +52,7 @@ public class QueryStringParameterConversionGenerator
             var parameterConditionBuilder = new StringBuilder();
                 
             // Build condition (is it nullable?)
-            if (apiEndpointParameter.Field.Type.Nullable && apiEndpointParameter.Field.Type is not ApiFieldType.Enum) // enums can be param="null", don't generate a null check
+            if (apiEndpointParameter.Field.Type.Nullable && apiEndpointParameter.Field.Type is not ApiType.Enum) // enums can be param="null", don't generate a null check
             {
                 parameterConditionBuilder.Append($"{csharpVariableName} != null");
             }
@@ -72,7 +72,7 @@ public class QueryStringParameterConversionGenerator
                 parameterValueBuilder.Append(apiEndpointParameter.Field.ToCSharpVariableName());
             }
                 
-            if (apiEndpointParameter.Field.Type is ApiFieldType.Array arrayType)
+            if (apiEndpointParameter.Field.Type is ApiType.Array arrayType)
             {
                 // For arrays, append all element values
                 parameterValueBuilder.Append(".Select(it => it" + GenerateParameterTypeConversion(arrayType.ElementType) + ")");
@@ -111,11 +111,11 @@ public class QueryStringParameterConversionGenerator
         }
     }
 
-    private static string GenerateParameterTypeConversion(ApiFieldType apiFieldType)
+    private static string GenerateParameterTypeConversion(ApiType apiType)
     {
-        switch (apiFieldType)
+        switch (apiType)
         {
-            case ApiFieldType.Primitive primitiveType:
+            case ApiType.Primitive primitiveType:
             {
                 var csharpType = primitiveType.ToCSharpPrimitiveType();
                 if (csharpType == CSharpType.String)
@@ -134,26 +134,26 @@ public class QueryStringParameterConversionGenerator
                     }
                 }
 
-                return !apiFieldType.Nullable
+                return !apiType.Nullable
                     ? $".ToString({formatString})"
                     : $"?.ToString({formatString})";
             }
                 
-            case ApiFieldType.UrlParam:
-                return !apiFieldType.Nullable
+            case ApiType.UrlParam:
+                return !apiType.Nullable
                     ? ".ToString()"
                     : "?.ToString()";
                 
-            case ApiFieldType.Enum:
+            case ApiType.Enum:
                 return ".ToEnumString()";
                 
-            case ApiFieldType.Ref:
-                return !apiFieldType.Nullable
+            case ApiType.Ref:
+                return !apiType.Nullable
                     ? ".Id"
                     : "?.Id";
                 
             default:
-                throw new ResourceException("Could not generate query string parameter type conversion for field type: " + apiFieldType.ClassName);
+                throw new ResourceException("Could not generate query string parameter type conversion for field type: " + apiType.ClassName);
         }
     }
 }

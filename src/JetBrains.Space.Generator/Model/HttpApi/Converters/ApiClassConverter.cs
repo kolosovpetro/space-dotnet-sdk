@@ -10,24 +10,19 @@ using JetBrains.Space.Common.Json.Serialization;
 
 namespace JetBrains.Space.Generator.Model.HttpApi.Converters;
 
-public class ApiFieldTypeConverter : JsonConverter<ApiType>
+public class ApiClassConverter : JsonConverter<ApiClass>
 {
     private static readonly Dictionary<string, Type> TypeMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "HA_Type.Array", typeof(ApiType.Array) },
-        { "HA_Type.Dto", typeof(ApiType.Dto) },
-        { "HA_Type.Enum", typeof(ApiType.Enum) },
-        { "HA_Type.UrlParam", typeof(ApiType.UrlParam) },
-        { "HA_Type.Map", typeof(ApiType.Map) },
-        { "HA_Type.Object", typeof(ApiType.Object) },
-        { "HA_Type.Primitive", typeof(ApiType.Primitive) },
-        { "HA_Type.Ref", typeof(ApiType.Ref) }
+        { "HA_Class.Clazz", typeof(ApiClass.Clazz) },
+        { "HA_Class.Interface", typeof(ApiClass.Interface) },
+        { "HA_Class.Object", typeof(ApiClass.Object) }
     };
-        
-    public override bool CanConvert(Type objectType) => typeof(ApiType).IsAssignableFrom(objectType);
+    
+    public override bool CanConvert(Type objectType) => typeof(ApiClass).IsAssignableFrom(objectType);
 
     [CanBeNull]
-    public override ApiType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override ApiClass Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.Null) return null;
 
@@ -39,13 +34,13 @@ public class ApiFieldTypeConverter : JsonConverter<ApiType>
         var className = jsonObject.GetStringValue("className");
         if (!string.IsNullOrEmpty(className) && TypeMap.TryGetValue(className, out var targetType))
         {
-            return JsonSerializer.Deserialize(ref readerAtStart, targetType, options) as ApiType;
+            return JsonSerializer.Deserialize(ref readerAtStart, targetType, options) as ApiClass;
         }
             
-        return JsonSerializer.Deserialize<ApiType.Object>(ref readerAtStart);
+        throw new JsonException("No className field was found that maps to a ApiClass subtype.");
     }
 
-    public override void Write(Utf8JsonWriter writer, ApiType value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, ApiClass value, JsonSerializerOptions options)
     {
         value.ClassName = TypeMap.First(it => it.Value == value.GetType()).Key;
         JsonSerializer.Serialize(writer, value, value.GetType(), options);

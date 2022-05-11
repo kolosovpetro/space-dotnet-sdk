@@ -112,7 +112,7 @@ public class CSharpApiModelResourceGenerator
         var builder = new StringBuilder();
         builder.AppendLine(GenerateMethodForApiEndpoint(apiEndpoint, baseEndpointPath));
             
-        var isResponseBatch = apiEndpoint.ResponseBody is ApiFieldType.Object { Kind: ApiFieldType.Object.ObjectKind.BATCH };
+        var isResponseBatch = apiEndpoint.ResponseBody is ApiType.Object { Kind: ApiType.Object.ObjectKind.BATCH };
         if (isResponseBatch && apiEndpoint.ResponseBody != null)
         {
             builder.AppendLine();
@@ -132,8 +132,8 @@ public class CSharpApiModelResourceGenerator
         var apiCallMethod = apiEndpoint.Method.ToHttpMethod();
         var methodNameForEndpoint = apiEndpoint.ToCSharpMethodName();
             
-        var isResponsePrimitiveOrArrayOfPrimitive = apiEndpoint.ResponseBody is ApiFieldType.Primitive 
-            or ApiFieldType.Array { ElementType: ApiFieldType.Primitive };
+        var isResponsePrimitiveOrArrayOfPrimitive = apiEndpoint.ResponseBody is ApiType.Primitive 
+            or ApiType.Array { ElementType: ApiType.Primitive };
             
         if (apiEndpoint.ResponseBody == null)
         {
@@ -352,7 +352,7 @@ public class CSharpApiModelResourceGenerator
 
         var methodNameForEndpoint = apiEndpoint.ToCSharpMethodName();
             
-        var batchDataType = ((ApiFieldType.Object)apiEndpoint.ResponseBody!).GetBatchDataType()!;
+        var batchDataType = ((ApiType.Object)apiEndpoint.ResponseBody!).GetBatchDataType()!;
             
         if (apiEndpoint.ResponseBody != null)
         {

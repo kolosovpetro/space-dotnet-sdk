@@ -10,7 +10,7 @@ public class ApiField
         
     [JsonPropertyName("type")]
     [JsonConverter(typeof(ApiFieldTypeConverter))]
-    public ApiFieldType Type { get; set; } = default!;
+    public ApiType Type { get; set; } = default!;
         
     [JsonPropertyName("optional")]
     public bool Optional { get; set; }
