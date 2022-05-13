@@ -112,7 +112,10 @@ public class CSharpApiModelResourceGenerator
         var builder = new StringBuilder();
         builder.AppendLine(GenerateMethodForApiEndpoint(apiEndpoint, baseEndpointPath));
             
-        var isResponseBatch = apiEndpoint.ResponseBody is ApiFieldType.Object { Kind: ApiFieldType.Object.ObjectKind.BATCH };
+        var isResponseBatch = apiEndpoint.ResponseBody is 
+            ApiFieldType.Object { Kind: ApiFieldType.Object.ObjectKind.BATCH } or
+            ApiFieldType.Object { Kind: ApiFieldType.Object.ObjectKind.SYNC_BATCH };
+        
         if (isResponseBatch && apiEndpoint.ResponseBody != null)
         {
             builder.AppendLine();
