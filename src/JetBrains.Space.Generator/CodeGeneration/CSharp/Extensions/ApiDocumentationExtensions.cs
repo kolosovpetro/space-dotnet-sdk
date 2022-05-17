@@ -15,6 +15,17 @@ public static class ApiDocumentationExtensions
         
         return ToCSharpDocumentationElement(subject, "<summary>", "</summary>");
     }
+    
+    
+    public static string ToCSharpDocumentationSummary(this string subject)
+    {
+        if (string.IsNullOrEmpty(subject))
+        {
+            return string.Empty;
+        }
+        
+        return ToCSharpDocumentationElement(new ApiDescription { Text = subject }, "<summary>", "</summary>");
+    }
 
     public static string ToCSharpDocumentationParameter(this ApiDescription subject, string parameterName)
     {
@@ -35,10 +46,24 @@ public static class ApiDocumentationExtensions
         var line = reader.ReadLine();
         while (line != null)
         {
-            builder.AppendLine("/// " + line
-                .Replace("<", "&lt;")
-                .Replace(">", "&gt;"));
-            
+            if (line.StartsWith("@see [") && line.EndsWith("]"))
+            {
+                // Support for: @see [space.jetbrains.api.runtime.helpers.SpaceScopes]
+                line = line
+                    .Replace("@see [", "")
+                    .Replace("]", "")
+                    .Replace("space.jetbrains.api.runtime.helpers.", "");
+                
+                builder.AppendLine($"/// <see cref=\"{line}\"/>");
+            }
+            else
+            {
+                // Regular line
+                builder.AppendLine("/// " + line
+                    .Replace("<", "&lt;")
+                    .Replace(">", "&gt;"));
+            }
+
             line = reader.ReadLine();
         }
 

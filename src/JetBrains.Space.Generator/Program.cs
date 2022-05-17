@@ -101,6 +101,79 @@ public static class Program
             
                 var apiModel = await connection.RequestResourceAsync<ApiModel>(
                     "GET", "api/http/http-api-model?$fields=dto,enums,urlParams,resources(*,nestedResources!),menuIds");
+                
+                var jsonSerializerOptions = new JsonSerializerOptions()
+                    .AddSpaceJsonTypeConverters();
+                
+                apiModel.Classes = JsonSerializer.Deserialize<List<ApiClass>>(@"[
+{
+""className"" : ""HA_Class.Interface"",
+""visibilityModifier"" : ""DEFAULT"",
+""name"" : ""SpacePermission"",
+""doc"" : ""Permissions for Space API. Could be used for oauth permission scopes generation.\n@see [space.jetbrains.api.runtime.helpers.SpaceScopes]"",
+""implements"" : [ ],
+""innerSubclasses"" : [
+{
+""className"" : ""HA_Class.Object"",
+""visibilityModifier"" : ""DEFAULT"",
+""name"" : ""AddCustomEmoji"",
+""doc"" : """",
+""implements"" : [
+""SpacePermission""
+],
+""innerSubclasses"" : [ ],
+""properties"" : [
+{
+""visibilityModifier"" : ""DEFAULT"",
+""name"" : ""code"",
+""type"" : {
+""className"" : ""HA_Type.Primitive"",
+""primitive"" : ""String"",
+""nullable"" : false,
+""tags"" : [ ]
+},
+""value"" : {
+""className"" : ""HA_DefaultValue.Const.Primitive"",
+""expression"" : ""\""Emojis.AddCustomEmoji\""""
+},
+""deprecation"" : null,
+""override"" : true
+}
+],
+""deprecation"" : null,
+""extends"" : null
+},
+{
+""className"" : ""HA_Class.Object"",
+""visibilityModifier"" : ""DEFAULT"",
+""name"" : ""AddMembers"",
+""doc"" : """",
+""implements"" : [
+""SpacePermission""
+],
+""innerSubclasses"" : [ ],
+""properties"" : [
+{
+""visibilityModifier"" : ""DEFAULT"",
+""name"" : ""code"",
+""type"" : {
+""className"" : ""HA_Type.Primitive"",
+""primitive"" : ""String"",
+""nullable"" : false,
+""tags"" : [ ]
+},
+""value"" : {
+""className"" : ""HA_DefaultValue.Const.Primitive"",
+""expression"" : ""\""Profile.Create\""""
+},
+""deprecation"" : null,
+""override"" : true
+}
+],
+""deprecation"" : null,
+""extends"" : null
+}
+  ]}]", jsonSerializerOptions);
                     
                 return apiModel;
             },

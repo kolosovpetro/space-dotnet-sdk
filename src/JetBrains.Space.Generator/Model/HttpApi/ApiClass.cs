@@ -28,8 +28,6 @@ public abstract class ApiClass
     [JsonPropertyName("deprecation")]
     public ApiDeprecation? Deprecation { get; set; } = default;
     
-    // TODO MAARTEN can we parse this?
-    // "doc" : "Permissions for Space API. Could be used for oauth permission scopes generation.\n@see [space.jetbrains.api.runtime.helpers.SpaceScopes]",
     [JsonPropertyName("doc")]
     public string? Documentation { get; set; } = default;
     

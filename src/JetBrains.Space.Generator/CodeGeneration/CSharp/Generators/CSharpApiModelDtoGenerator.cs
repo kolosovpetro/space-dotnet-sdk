@@ -34,7 +34,7 @@ public class CSharpApiModelDtoGenerator
             builder.AppendLine($"{indent}[JsonConverter(typeof(ClassNameDtoTypeConverter))]");
         }
 
-        var modifierForDto = apiDto.HierarchyRole2 switch
+        var hierarchyRoleForDto = apiDto.HierarchyRole2 switch
         {
             HierarchyRole2.INTERFACE => "interface",
             HierarchyRole2.SEALED_INTERFACE => "interface",
@@ -63,7 +63,7 @@ public class CSharpApiModelDtoGenerator
             
         dtoHierarchy.Add(nameof(IPropagatePropertyAccessPath));
 
-        builder.AppendLine($"{indent}public {modifierForDto} {typeNameForDto}");
+        builder.AppendLine($"{indent}public {hierarchyRoleForDto} {typeNameForDto}");
         indent.Increment();
         builder.AppendLine($"{indent} : " + string.Join(", ", dtoHierarchy));
         indent.Decrement();
