@@ -21,14 +21,14 @@ public class SyncBatch<T>
     /// <summary>
     /// Represents the etag.
     /// </summary>
-    [JsonPropertyName("sinceEtag")]
-    public string? SinceEtag { get; set; }
+    [JsonPropertyName("etag")]
+    public string? Etag { get; set; }
 
     /// <inheritdoc />
     public void SetAccessPath(string parentChainPath, bool validateHasBeenSet)
     {
         PropagatePropertyAccessPathHelper.SetAccessPathForValue($"{parentChainPath}->With{nameof(Data)}()", validateHasBeenSet, Data);
-        PropagatePropertyAccessPathHelper.SetAccessPathForValue($"{parentChainPath}->With{nameof(SinceEtag)}()", validateHasBeenSet, SinceEtag);
+        PropagatePropertyAccessPathHelper.SetAccessPathForValue($"{parentChainPath}->With{nameof(Etag)}()", validateHasBeenSet, Etag);
     }
 
     /// <inheritdoc />
